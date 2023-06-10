@@ -31,5 +31,9 @@ I am currently writing an extensive documentation for the project, this way it w
     - CUPS
 - Macproxy
 - Resize filesystem at first boot
-- Easy input of wifi credentials
+- User first-boot wizard
+	- Wifi credentials
+	- Country
+	- Timezone
 - Update management (hifiberry example or swupdate)
+	- User notification
