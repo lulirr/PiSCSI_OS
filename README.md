@@ -31,9 +31,10 @@ I am currently writing an extensive documentation for the project, this way it w
     - CUPS
 - Macproxy
 - Resize filesystem at first boot
-- User first-boot wizard
+- User first-boot wizard (might use RPI imager)
 	- Wifi credentials
 	- Country
 	- Timezone
 - Update management (hifiberry example or swupdate)
 	- User notification
+- Deposit partition (if user wants to move fast some images on the sd card)

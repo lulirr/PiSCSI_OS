@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PISCSI
+	bool "piscsi"
+	select BR2_PACKAGE_SPDLOG
+	select BR2_PACKAGE_LIBPCAP
+	select BR2_PACKAGE_PROTOBUF
+	select BR2_PACKAGE_BRIDGE_UTILS
+	select BR2_PACKAGE_LIBEV
+	select BR2_PACKAGE_LIBEVDEV
+	help
+	  PiSCSI allows a Raspberry Pi to function as emulated SCSI devices
+
+	  https://github.com/PiSCSI/piscsi

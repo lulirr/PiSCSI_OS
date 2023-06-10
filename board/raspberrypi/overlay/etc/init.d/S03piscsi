@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Starts piscsi backend
+#
+
+case "$1" in
+  start)
+  	printf "Starting piscsi: "
+  	start-stop-daemon -S -q -b -m -p /var/run/piscsi.pid \
+		--exec /usr/bin/piscsi -- $PISCSI_ARGS &
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	;;
+  stop)
+  	printf "Stopping piscsi: "
+  	start-stop-daemon -K -q --remove-pidfile -p /var/run/piscsi.pid
+	;;
+  restart|reload)
+  	"$0" stop
+  	sleep 1
+  	"$0" start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
