@@ -35,7 +35,7 @@ start() {
 }
 stop() {
 	printf "Stopping dropbear sshd: "
-	killall -q dropbear
+	killall -q dropbear #maybe option -n or -x would do the job more cleanly
 	start-stop-daemon -K -q -p /var/run/dropbear.pid
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 }

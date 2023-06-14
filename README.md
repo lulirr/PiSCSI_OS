@@ -8,6 +8,8 @@ I am currently writing an extensive documentation for the project, this way it w
 
 ## State of the project
 
+All that should be done to consider the project as complete, the order doesn't have a particular meaning. 
+
 **Done:**
 
 - Base OS
@@ -37,4 +39,8 @@ I am currently writing an extensive documentation for the project, this way it w
 	- Timezone
 - Update management (hifiberry example or swupdate)
 	- User notification
+
+**Optionnal:**
+
+- hfsprogs to mount images
 - Deposit partition (if user wants to move fast some images on the sd card)
