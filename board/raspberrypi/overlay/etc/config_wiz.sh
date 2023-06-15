@@ -46,12 +46,6 @@ WIFI_PASS=""
 
 TIME_ZONE=""
 
-# Account
-# If wanted, you can create an account
-
-ACCOUNT_NAME=""
-ACCOUNT_PASS=""
-
 # SSH public key
 # The script can copy for you your public key to the machine
 # Caution: If set, root password will be disabled

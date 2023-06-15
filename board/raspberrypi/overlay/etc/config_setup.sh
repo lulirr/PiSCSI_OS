@@ -1,25 +1,41 @@
 #!/bin/sh
 
+# Exits if any of the commands had an error
+set -e
+
+# Create function for pretty print
+
+prettyp () {
+    echo $@
+}
+
 # Get variables from config_wiz.sh
 
-if ! mount | grep "/boot" then
+if [ ! -d /boot ]
+then
+    mkdir /boot
+fi
+
+if ! mount | grep "/boot"
+then
     mount /dev/mmcblk0p1 /boot
 fi
 
 . /boot/config_wiz.sh
 
-## Check first if boot is mounted
-
 # Hostname
 
-if [ $HOSTNAME != '' ] && [ $HOSTNAME != 'piscsi' ] then
+if [ $HOSTNAME != '' ] && [ $HOSTNAME != 'piscsi' ]
+then
     echo $HOSTNAME > /etc/hostname
     hostname -F /etc/hostname
+    prettyp "Configure hostname as: $HOSTNAME"
 fi
 
 # IP
 
 if [ $IP_METHOD != '' ] && [ $IP_METHOD != 'dhcp' ]
+then
     cat > /etc/network/interfaces <<EOF
 auto lo
 iface lo inet loopback
@@ -32,92 +48,56 @@ iface wlan0 inet static
 	pre-up wpa_supplicant -D nl80211 -i wlan0 -c /etc/wpa_supplicant.conf -B
 	post-down killall -q wpa_supplicant
 EOF
+    prettyp "Configure IP as a static address ($IP_ADDRESS)"
+fi
 
+if [ $IP_DNS != '' ]
+then
     cat > /etc/resolv.conf <<EOF
-    nameserver $IP_DNS
+nameserver $IP_DNS
 EOF
-
+    prettyp "Configure DNS as $IP_DNS"
 fi
 
 # Wifi
 
-cat > /etc/wpa_supplicant.conf <<EOF
+if [ $WIFI_SSID != '' ]
+then
+    cat > /etc/wpa_supplicant.conf <<EOF
 ctrl_interface=/var/run/wpa_supplicant
 country=$WIFI_COUNTRY
 ap_scan=1
 
 network={
-    ssid=$WIFI_SSID
-	psk=$WIFI_PASS
+    ssid="$WIFI_SSID"
+    psk="$WIFI_PASS"
 }
 EOF
+    prettyp "Stored Wi-Fi credentials for $WIFI_SSID"
+fi
 
 # TZ
 
-ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
+if [ $TIME_ZONE != '' ]
+then
+    ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
+    prettyp "Defined time zone as $TIME_ZONE"
+fi
+
+# SSH
+
+if [ $SSH_PUBLIC_KEY != '' ]
+then
+    if [ ! -d /root/.ssh ]
+    then
+        mkdir /root/.ssh
+    fi
+    echo $SSH_PUBLIC_KEY >> /root/.ssh/authorized_keys
+    prettyp "Stored SSH public key"
+fi
+
 
 #==============================================================================#
 # Clean config_wiz.sh
 
-cat > /boot/config_wiz.sh <<EOF
-#!/bin/sh
-
-#==============================================================================#
-#
-# PiSCSI_OS Configuration Wizard
-#
-#==============================================================================#
-
-# Welcome to PiSCSI
-# This file serves to configure your small OS
-# It is read at every startup
-# Sensitive information is removed after reading (WIFI_*, ACCOUNT_*, SSH_*)
-# The other fields, if changed, will update the configuration at boot
-
-# Hostname of the machine
-# Default: piscsi
-
-HOSTNAME="piscsi"
-
-# IP address of the machine
-# Default:
-#     - IP_METHOD="dhcp"
-# Please change IP_METHOD to "static" to use the other fields, if IP_METHOD is
-# set to "dhcp" or empty, IP_* are ignored.
-
-IP_METHOD="dhcp"
-IP_ADDRESS=""
-IP_NETMASK=""
-IP_GATEWAY=""
-IP_DNS=""
-
-# Wifi settings of the machine
-# Wifi channels differ between countries, please set WIFI_COUNTRY with the
-# corresponding ISO alpha-2. e.g. UK, US, FR, DE, JP, etc.
-#
-# List: https://github.com/raspberrypi/rpi-imager/blob/qml/src/countries.txt
-# Wiki: https://en.wikipedia.org/wiki/List_of_WLAN_channels
-
-WIFI_COUNTRY=""
-WIFI_SSID=""
-WIFI_PASS=""
-
-# Time Zone of the machine
-# e.g. "Europe/Zurich", "America/Phoenix", "Australia/Darwin"
-# Valid entries: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-
-TIME_ZONE=""
-
-# Account
-# If wanted, you can create an account
-
-ACCOUNT_NAME=""
-ACCOUNT_PASS=""
-
-# SSH public key
-# The script can copy for you your public key to the machine
-# Caution: If set, root password will be disabled
-# e.g. "ssh-rsa AAAAB3N...KB7g8lg user@machine"
-
-SSH_PUBLIC_KEY=""
-EOF
+cat config_wiz.sh > /boot/config_wiz.sh
