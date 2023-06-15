@@ -31,4 +31,4 @@ mount /dev/mmcblk0p1 /boot
 
 sed -i "s/init=\/etc\/resizefs.sh//g" /boot/cmdline.txt
 
-reboot
+#reboot
