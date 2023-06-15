@@ -1,0 +1,38 @@
+#!/bin/sh
+
+firstphase() {
+	mount -a
+	fdisk /dev/mmcblk0 << EOF
+d
+2
+n
+p
+2
+
+
+w
+EOF
+
+	touch /etc/.firstphase
+	reboot
+}
+
+secondphase() {
+	resize2fs /dev/mmcblk0p2
+	rm /etc/.firstphase
+	rm /etc/init.d/S00resizefs
+}
+
+case "$1" in
+	start)
+		if [ ! -e /etc/.firstphase ]
+		then
+			firstphase
+		else
+			secondphase
+		fi
+		;;
+	*)
+		echo "Usage: $0 start"
+		exit 1
+esac
