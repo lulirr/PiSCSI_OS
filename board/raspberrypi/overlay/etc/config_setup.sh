@@ -100,4 +100,4 @@ fi
 #==============================================================================#
 # Clean config_wiz.sh
 
-cat config_wiz.sh > /boot/config_wiz.sh
+cat /etc/config_wiz.sh > /boot/config_wiz.sh
